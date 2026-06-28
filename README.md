@@ -1,7 +1,7 @@
 # TECHINICAL-TEST-LAMDA
 ## Identitas
 - Nama: Raihan Wendra Baswara 
-- niversitas: Telkom University
+- Universitas: Telkom University
 - Program Studi: SI INFORMATIKA (2024)
 - Angkatan: 2024
 ## Deskripsi
