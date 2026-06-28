@@ -20,8 +20,19 @@ mahasiswa-app/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── MahasiswaForm.jsx
+│   │   │   ├── MahasiswaList.jsx
+│   │   │   ├── MahasiswaCard.jsx
+│   │   │   └── SearchBox.jsx
 │   │   ├── pages/
-│   │   └── services/     
+│   │   │   └── HomePage.jsx
+│   │   ├── services/
+│   │   │   └── mahasiswaService.js   
+│   │   ├── App.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
 │   └── Dockerfile
 ├── backend/
 │   ├── handlers/
