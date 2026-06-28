@@ -1,9 +1,9 @@
 # TECHINICAL-TEST-LAMDA
 ## Identitas
-Nama: Raihan Wendra Baswara 
-Universitas: Telkom University
-Program Studi: SI INFORMATIKA (2024)
-Angkatan: 2024
+- Nama: Raihan Wendra Baswara 
+- niversitas: Telkom University
+- Program Studi: SI INFORMATIKA (2024)
+- Angkatan: 2024
 ## Deskripsi
 Repository ini berisi 3 aplikasi CRUD Mahasiswa sebagai bagian dari technical test 
 LAMDA Technology Solution. Setiap aplikasi menggunakan stack teknologi yang berbeda 
