@@ -1,4 +1,4 @@
-# TECHINICAL-TEST-LAMDA
+# TECHNICAL TEST-LAMDA
 ## Identitas
 - Nama: Raihan Wendra Baswara 
 - Universitas: Telkom University
