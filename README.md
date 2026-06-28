@@ -21,7 +21,7 @@ mahasiswa-app/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
-│   │   └── services/     ← semua akses API ada di sini
+│   │   └── services/     
 │   └── Dockerfile
 ├── backend/
 │   ├── handlers/
