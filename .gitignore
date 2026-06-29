@@ -49,3 +49,8 @@ Thumbs.db
 # .vscode/
 
 
+
+# Frontend Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.env
