@@ -1,0 +1,247 @@
+basePath: /
+definitions:
+  models.Jurusan:
+    properties:
+      fakultas:
+        type: string
+      id_jurusan:
+        type: integer
+      jenjang:
+        type: string
+      nama_jurusan:
+        type: string
+    type: object
+  models.Mahasiswa:
+    properties:
+      alamat:
+        type: string
+      fakultas:
+        type: string
+      id:
+        type: integer
+      id_jurusan:
+        type: integer
+      jenjang:
+        type: string
+      nama:
+        type: string
+      nama_jurusan:
+        type: string
+      nim:
+        type: string
+      tgl_lahir:
+        type: string
+      umur:
+        type: integer
+    type: object
+  models.MahasiswaInput:
+    properties:
+      alamat:
+        type: string
+      fakultas:
+        type: string
+      jenjang:
+        type: string
+      nama:
+        type: string
+      nama_jurusan:
+        type: string
+      nim:
+        type: string
+      tgl_lahir:
+        type: string
+      umur:
+        minimum: 1
+        type: integer
+    required:
+    - alamat
+    - fakultas
+    - jenjang
+    - nama
+    - nama_jurusan
+    - nim
+    - tgl_lahir
+    - umur
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: REST API Technical Test Lambda
+  title: Mahasiswa REST API
+  version: "1.0"
+paths:
+  /api/jurusan:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil seluruh data jurusan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Jurusan'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ambil semua jurusan
+      tags:
+      - Jurusan
+  /api/mahasiswa:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil seluruh data mahasiswa
+      parameters:
+      - description: Cari berdasarkan nama atau NIM
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Mahasiswa'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ambil semua mahasiswa
+      tags:
+      - Mahasiswa
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Data Mahasiswa
+        in: body
+        name: mahasiswa
+        required: true
+        schema:
+          $ref: '#/definitions/models.MahasiswaInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Tambah mahasiswa
+      tags:
+      - Mahasiswa
+  /api/mahasiswa/{id}:
+    delete:
+      parameters:
+      - description: ID Mahasiswa
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Hapus mahasiswa
+      tags:
+      - Mahasiswa
+    get:
+      parameters:
+      - description: ID Mahasiswa
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Mahasiswa'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ambil mahasiswa berdasarkan ID
+      tags:
+      - Mahasiswa
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Mahasiswa
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data Mahasiswa
+        in: body
+        name: mahasiswa
+        required: true
+        schema:
+          $ref: '#/definitions/models.MahasiswaInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update mahasiswa
+      tags:
+      - Mahasiswa
+  /api/mahasiswa/reset:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Hapus semua mahasiswa
+      tags:
+      - Mahasiswa
+swagger: "2.0"

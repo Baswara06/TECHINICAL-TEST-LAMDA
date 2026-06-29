@@ -8,6 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+// GetAllJurusan godoc
+// @Summary Ambil semua jurusan
+// @Description Mengambil seluruh data jurusan
+// @Tags Jurusan
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Jurusan
+// @Failure 500 {object} map[string]string
+// @Router /api/jurusan [get]
 // GET /api/jurusan
 func GetAllJurusan(c *gin.Context) {
 	rows, err := database.DB.Query(`

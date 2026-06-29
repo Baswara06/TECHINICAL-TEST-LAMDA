@@ -47,10 +47,3 @@ Thumbs.db
 # Editor/IDE
 # .idea/
 # .vscode/
-
-
-
-# Frontend Dependencies
-frontend/node_modules/
-frontend/dist/
-frontend/.env

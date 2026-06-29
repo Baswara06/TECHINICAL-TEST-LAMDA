@@ -1,18 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
-import MahasiswaForm from './components/MahasiswaForm';
-import MahasiswaList from './components/MahasiswaList';
-import mahasiswaService from './services/mahasiswaService';
-import './App.css';
+import { useState, useEffect, useCallback } from "react";
+import MahasiswaForm from "./components/MahasiswaForm";
+import MahasiswaList from "./components/MahasiswaList";
+import mahasiswaService from "./services/mahasiswaService";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import "./App.css";
 
 const INITIAL_FORM = {
-  namaLengkap: '',
-  nim: '',
-  umur: '',
-  tanggalLahir: '',
-  jurusan: '',
-  fakultas: '',
-  jenjang: 'S1',
-  alamat: '',
+  namaLengkap: "",
+  nim: "",
+  umur: "",
+  tanggalLahir: "",
+  jurusan: "",
+  fakultas: "",
+  jenjang: "S1",
+  alamat: "",
 };
 
 function App() {
@@ -20,13 +23,16 @@ function App() {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [selectedId, setSelectedId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
-  const showNotif = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
+  const showNotif = (message, type = "success") => {
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
   };
 
   const toFrontend = (item) => ({
@@ -52,13 +58,13 @@ function App() {
     alamat: form.alamat,
   });
 
-  const loadData = useCallback(async (search = '') => {
+  const loadData = useCallback(async (search = "") => {
     setLoading(true);
     try {
       const data = await mahasiswaService.getAll(search);
       setMahasiswaList(data.map(toFrontend));
     } catch (err) {
-      showNotif('Gagal memuat data: ' + err.message, 'error');
+      showNotif("Gagal memuat data: " + err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -81,15 +87,24 @@ function App() {
   };
 
   const validateForm = () => {
-    const required = ['namaLengkap', 'nim', 'umur', 'tanggalLahir', 'jurusan', 'fakultas', 'jenjang', 'alamat'];
+    const required = [
+      "namaLengkap",
+      "nim",
+      "umur",
+      "tanggalLahir",
+      "jurusan",
+      "fakultas",
+      "jenjang",
+      "alamat",
+    ];
     for (const field of required) {
-      if (!formData[field] || formData[field].toString().trim() === '') {
-        showNotif(`Field ${field} wajib diisi!`, 'error');
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        showNotif(`Field ${field} wajib diisi!`, "error");
         return false;
       }
     }
     if (isNaN(parseInt(formData.umur)) || parseInt(formData.umur) < 1) {
-      showNotif('Umur harus berupa angka yang valid!', 'error');
+      showNotif("Umur harus berupa angka yang valid!", "error");
       return false;
     }
     return true;
@@ -100,43 +115,55 @@ function App() {
     try {
       if (isEditing && selectedId) {
         await mahasiswaService.update(selectedId, toBackend(formData));
-        showNotif('Data berhasil diperbarui! ✅');
+        showNotif("Data berhasil diperbarui!", "success");
       } else {
         await mahasiswaService.create(toBackend(formData));
-        showNotif('Mahasiswa berhasil ditambahkan! ✅');
+        showNotif("Mahasiswa berhasil ditambahkan!", "success");
       }
       setFormData(INITIAL_FORM);
       setSelectedId(null);
       setIsEditing(false);
       loadData(searchQuery);
     } catch (err) {
-      showNotif('Gagal menyimpan: ' + err.message, 'error');
+      const msg = err.message || "";
+      if (
+        msg.toLowerCase().includes("nim") ||
+        msg.toLowerCase().includes("unique") ||
+        msg.toLowerCase().includes("duplicate")
+      ) {
+        showNotif(
+          "NIM telah digunakan. Silakan periksa kembali nomor yang Anda masukkan.",
+          "error",
+        );
+      } else {
+        showNotif("Gagal menyimpan: " + err.message, "error");
+      }
     }
   };
 
-    const handleSelect = (item) => {
+  const handleSelect = (item) => {
     setSelectedId(item.id);
-    };
+  };
 
-    // Klik tombol edit ✏️ → isi form + mode edit
-const handleUpdate = (item) => {
+  // Klik tombol edit ✏️ → isi form + mode edit
+  const handleUpdate = (item) => {
     setSelectedId(item.id);
     setFormData(item);
     setIsEditing(true);
-    };
+  };
 
-    // Tombol batal
-const handleCancel = () => {
+  // Tombol batal
+  const handleCancel = () => {
     setFormData(INITIAL_FORM);
     setSelectedId(null);
     setIsEditing(false);
-};
+  };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Yakin mau hapus data ini?')) return;
+    if (!window.confirm("Yakin mau hapus data ini?")) return;
     try {
       await mahasiswaService.delete(id);
-      showNotif('Data berhasil dihapus! 🗑️');
+      showNotif("Data berhasil dihapus! 🗑️");
       if (selectedId === id) {
         setFormData(INITIAL_FORM);
         setSelectedId(null);
@@ -144,70 +171,216 @@ const handleCancel = () => {
       }
       loadData(searchQuery);
     } catch (err) {
-      showNotif('Gagal menghapus: ' + err.message, 'error');
+      showNotif("Gagal menghapus: " + err.message, "error");
     }
   };
 
   const handleResetAll = async () => {
-    if (!window.confirm('⚠️ Yakin mau hapus SEMUA data mahasiswa? Aksi ini tidak bisa dibatalkan!')) return;
+    if (
+      !window.confirm(
+        "⚠️ Yakin mau hapus SEMUA data mahasiswa? Aksi ini tidak bisa dibatalkan!",
+      )
+    )
+      return;
     try {
       await mahasiswaService.resetAll();
-      showNotif('Semua data berhasil dihapus! 🔄');
+      showNotif("Semua data berhasil dihapus! 🔄");
       setFormData(INITIAL_FORM);
       setSelectedId(null);
       setIsEditing(false);
       loadData();
     } catch (err) {
-      showNotif('Gagal reset data: ' + err.message, 'error');
+      showNotif("Gagal reset data: " + err.message, "error");
     }
   };
 
   const handleExport = (type) => {
     if (mahasiswaList.length === 0) {
-      showNotif('Tidak ada data untuk diekspor!', 'error');
+      showNotif("Tidak ada data untuk diekspor!", "error");
       return;
     }
-    if (type === 'json') {
-      const blob = new Blob([JSON.stringify(mahasiswaList, null, 2)], { type: 'application/json' });
+
+    if (type === "json") {
+      const blob = new Blob([JSON.stringify(mahasiswaList, null, 2)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'mahasiswa.json';
+      a.download = "mahasiswa.json";
       a.click();
       URL.revokeObjectURL(url);
-      showNotif('Export JSON berhasil! 🗂️');
-    } else if (type === 'csv') {
-      const headers = ['ID', 'Nama', 'NIM', 'Umur', 'Tanggal Lahir', 'Jurusan', 'Fakultas', 'Jenjang', 'Alamat'];
+      showNotif("Export JSON berhasil! 🗂️");
+    } else if (type === "csv") {
+      const headers = [
+        "ID",
+        "Nama",
+        "NIM",
+        "Umur",
+        "Tanggal Lahir",
+        "Jurusan",
+        "Fakultas",
+        "Jenjang",
+        "Alamat",
+      ];
       const rows = mahasiswaList.map((m) => [
-        m.id, m.namaLengkap, m.nim, m.umur,
-        m.tanggalLahir, m.jurusan, m.fakultas, m.jenjang, `"${m.alamat}"`
+        m.id,
+        m.namaLengkap,
+        m.nim,
+        m.umur,
+        m.tanggalLahir,
+        m.jurusan,
+        m.fakultas,
+        m.jenjang,
+        `"${m.alamat}"`,
       ]);
-      const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
+      const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'mahasiswa.csv';
+      a.download = "mahasiswa.csv";
       a.click();
       URL.revokeObjectURL(url);
-      showNotif('Export CSV berhasil! 📋');
-    } else {
-      showNotif(`Export ${type.toUpperCase()} coming soon!`, 'error');
+      showNotif("Export CSV berhasil! 📋");
+    } else if (type === "excel") {
+      const wsData = [
+        [
+          "ID",
+          "Nama",
+          "NIM",
+          "Umur",
+          "Tanggal Lahir",
+          "Jurusan",
+          "Fakultas",
+          "Jenjang",
+          "Alamat",
+        ],
+        ...mahasiswaList.map((m) => [
+          m.id,
+          m.namaLengkap,
+          m.nim,
+          m.umur,
+          m.tanggalLahir,
+          m.jurusan,
+          m.fakultas,
+          m.jenjang,
+          m.alamat,
+        ]),
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // Set lebar kolom
+      ws["!cols"] = [
+        { wch: 5 }, // ID
+        { wch: 25 }, // Nama
+        { wch: 15 }, // NIM
+        { wch: 6 }, // Umur
+        { wch: 14 }, // Tgl Lahir
+        { wch: 25 }, // Jurusan
+        { wch: 20 }, // Fakultas
+        { wch: 10 }, // Jenjang
+        { wch: 35 }, // Alamat
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data Mahasiswa");
+      XLSX.writeFile(wb, "mahasiswa.xlsx");
+      showNotif("Export Excel berhasil! 📊");
+    } else if (type === "pdf") {
+      const doc = new jsPDF();
+
+      // Header
+      doc.setFontSize(16);
+      doc.setTextColor(102, 126, 234);
+      doc.text("Data Mahasiswa", 14, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(
+        `Diekspor pada: ${new Date().toLocaleDateString("id-ID")}`,
+        14,
+        28,
+      );
+
+      // Tabel
+      autoTable(doc, {
+        startY: 35,
+        head: [
+          [
+            "No",
+            "Nama",
+            "NIM",
+            "Umur",
+            "Jurusan",
+            "Fakultas",
+            "Jenjang",
+            "Alamat",
+          ],
+        ],
+        body: mahasiswaList.map((m, i) => [
+          i + 1,
+          m.namaLengkap,
+          m.nim,
+          m.umur,
+          m.jurusan,
+          m.fakultas,
+          m.jenjang,
+          m.alamat,
+        ]),
+        headStyles: {
+          fillColor: [102, 126, 234],
+          textColor: 255,
+          fontStyle: "bold",
+          fontSize: 9,
+        },
+        bodyStyles: {
+          fontSize: 8,
+        },
+        alternateRowStyles: {
+          fillColor: [245, 247, 255],
+        },
+        columnStyles: {
+          7: { cellWidth: 40 }, // Alamat lebih lebar
+        },
+        margin: { left: 14, right: 14 },
+      });
+
+      doc.save("mahasiswa.pdf");
+      showNotif("Export PDF berhasil! 📄");
     }
   };
 
   return (
     <div className="app-container">
+      {/* Header */}
       <header className="app-header">
         <h1>📚 Sistem Manajemen Data Mahasiswa</h1>
       </header>
 
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.message}
-        </div>
-      )}
+      {/* Notifikasi Stack */}
+      <div className="notification-stack">
+        {notifications.map((notif) => (
+          <div key={notif.id} className={`notification ${notif.type}`}>
+            <span className="notif-icon">
+              {notif.type === "success" ? "✅" : "❌"}
+            </span>
+            <span className="notif-message">{notif.message}</span>
+            <button
+              className="notif-close"
+              onClick={() =>
+                setNotifications((prev) =>
+                  prev.filter((n) => n.id !== notif.id),
+                )
+              }
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
 
+      {/* Main Content */}
       <main className="main-content">
         <section className="input-form-section">
           <MahasiswaForm
@@ -221,7 +394,10 @@ const handleCancel = () => {
 
         <section className="list-section">
           {loading ? (
-            <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
+            <div
+              className="card"
+              style={{ textAlign: "center", padding: "40px" }}
+            >
               <p>⏳ Memuat data...</p>
             </div>
           ) : (
@@ -240,11 +416,11 @@ const handleCancel = () => {
         </section>
       </main>
 
+      {/* Footer */}
       <footer className="app-footer">
-        <p>Technical Test - LAMDA Technology Solution © 2024</p>
+        <p>LAMDA Technology Solution © 2026</p>
       </footer>
     </div>
   );
 }
-
 export default App;

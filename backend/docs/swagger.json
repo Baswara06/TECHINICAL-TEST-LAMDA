@@ -1,0 +1,373 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "REST API Technical Test Lambda",
+        "title": "Mahasiswa REST API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/jurusan": {
+            "get": {
+                "description": "Mengambil seluruh data jurusan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jurusan"
+                ],
+                "summary": "Ambil semua jurusan",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Jurusan"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/mahasiswa": {
+            "get": {
+                "description": "Mengambil seluruh data mahasiswa",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Ambil semua mahasiswa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cari berdasarkan nama atau NIM",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Mahasiswa"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Tambah mahasiswa",
+                "parameters": [
+                    {
+                        "description": "Data Mahasiswa",
+                        "name": "mahasiswa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MahasiswaInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/mahasiswa/reset": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Hapus semua mahasiswa",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/mahasiswa/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Ambil mahasiswa berdasarkan ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Mahasiswa",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Mahasiswa"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Update mahasiswa",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Mahasiswa",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data Mahasiswa",
+                        "name": "mahasiswa",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MahasiswaInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mahasiswa"
+                ],
+                "summary": "Hapus mahasiswa",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Mahasiswa",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Jurusan": {
+            "type": "object",
+            "properties": {
+                "fakultas": {
+                    "type": "string"
+                },
+                "id_jurusan": {
+                    "type": "integer"
+                },
+                "jenjang": {
+                    "type": "string"
+                },
+                "nama_jurusan": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Mahasiswa": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "fakultas": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_jurusan": {
+                    "type": "integer"
+                },
+                "jenjang": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nama_jurusan": {
+                    "type": "string"
+                },
+                "nim": {
+                    "type": "string"
+                },
+                "tgl_lahir": {
+                    "type": "string"
+                },
+                "umur": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MahasiswaInput": {
+            "type": "object",
+            "required": [
+                "alamat",
+                "fakultas",
+                "jenjang",
+                "nama",
+                "nama_jurusan",
+                "nim",
+                "tgl_lahir",
+                "umur"
+            ],
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "fakultas": {
+                    "type": "string"
+                },
+                "jenjang": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nama_jurusan": {
+                    "type": "string"
+                },
+                "nim": {
+                    "type": "string"
+                },
+                "tgl_lahir": {
+                    "type": "string"
+                },
+                "umur": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        }
+    }
+}

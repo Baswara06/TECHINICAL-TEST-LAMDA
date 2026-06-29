@@ -8,6 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetAllMahasiswa godoc
+// @Summary Ambil semua mahasiswa
+// @Description Mengambil seluruh data mahasiswa
+// @Tags Mahasiswa
+// @Accept json
+// @Produce json
+// @Param search query string false "Cari berdasarkan nama atau NIM"
+// @Success 200 {array} models.Mahasiswa
+// @Failure 500 {object} map[string]string
+// @Router /api/mahasiswa [get]
 // GET /api/mahasiswa?search=xxx
 func GetAllMahasiswa(c *gin.Context) {
 	search := c.Query("search")
@@ -52,6 +62,14 @@ func GetAllMahasiswa(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
+// GetMahasiswaByID godoc
+// @Summary Ambil mahasiswa berdasarkan ID
+// @Tags Mahasiswa
+// @Produce json
+// @Param id path int true "ID Mahasiswa"
+// @Success 200 {object} models.Mahasiswa
+// @Failure 404 {object} map[string]string
+// @Router /api/mahasiswa/{id} [get]
 // GET /api/mahasiswa/:id
 func GetMahasiswaByID(c *gin.Context) {
 	id := c.Param("id")
@@ -78,6 +96,16 @@ func GetMahasiswaByID(c *gin.Context) {
 	c.JSON(http.StatusOK, m)
 }
 
+
+// CreateMahasiswa godoc
+// @Summary Tambah mahasiswa
+// @Tags Mahasiswa
+// @Accept json
+// @Produce json
+// @Param mahasiswa body models.MahasiswaInput true "Data Mahasiswa"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Router /api/mahasiswa [post]
 // POST /api/mahasiswa
 func CreateMahasiswa(c *gin.Context) {
 	var input models.MahasiswaInput
@@ -132,6 +160,17 @@ func CreateMahasiswa(c *gin.Context) {
 	})
 }
 
+
+// UpdateMahasiswa godoc
+// @Summary Update mahasiswa
+// @Tags Mahasiswa
+// @Accept json
+// @Produce json
+// @Param id path int true "ID Mahasiswa"
+// @Param mahasiswa body models.MahasiswaInput true "Data Mahasiswa"
+// @Success 200 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /api/mahasiswa/{id} [put]
 // PUT /api/mahasiswa/:id
 func UpdateMahasiswa(c *gin.Context) {
 	id := c.Param("id")
@@ -187,6 +226,15 @@ func UpdateMahasiswa(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil diperbarui"})
 }
 
+
+// DeleteMahasiswa godoc
+// @Summary Hapus mahasiswa
+// @Tags Mahasiswa
+// @Produce json
+// @Param id path int true "ID Mahasiswa"
+// @Success 200 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /api/mahasiswa/{id} [delete]
 // DELETE /api/mahasiswa/:id
 func DeleteMahasiswa(c *gin.Context) {
 	id := c.Param("id")
@@ -206,6 +254,13 @@ func DeleteMahasiswa(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil dihapus"})
 }
 
+
+// ResetAllMahasiswa godoc
+// @Summary Hapus semua mahasiswa
+// @Tags Mahasiswa
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /api/mahasiswa/reset [delete]
 // DELETE /api/mahasiswa/reset - Hapus semua data mahasiswa
 func ResetAllMahasiswa(c *gin.Context) {
 	_, err := database.DB.Exec("DELETE FROM mahasiswa")

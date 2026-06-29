@@ -1,3 +1,9 @@
+// @title Mahasiswa REST API
+// @version 1.0
+// @description REST API Technical Test Lambda
+// @host localhost:8080
+// @BasePath /
+
 package main
 
 import (
@@ -8,6 +14,13 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+
+    swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+
+    _ "mahasiswa-backend/docs"
+
 )
 
 func main() {
@@ -21,6 +34,7 @@ func main() {
 
 	// Setup Gin
 	r := gin.Default()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// CORS
 	r.Use(cors.New(cors.Config{
