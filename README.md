@@ -2,14 +2,14 @@
 
 ## Identitas
 - **Nama**: Raihan Wendra Baswara
-- **Branch**: soal-1
+- **Universitas**: Telkom Universiry
 
 ## Deskripsi
 Aplikasi web CRUD mahasiswa dengan arsitektur REST API. Frontend React hanya berfungsi sebagai consumer API dan tidak ada query database di sisi frontend.
 
 ## Teknologi yang Digunakan
 - **Frontend**: React (Vite), Axios
-- **Backend**: Go 1.21, Gin Framework
+- **Backend**: Go 1.24, Gin Framework
 - **Database**: PostgreSQL 15
 - **API Docs**: Swagger (swaggo)
 - **Deployment**: Docker, Docker Compose
@@ -54,8 +54,7 @@ docker-compose up --build
 ### Akses Aplikasi
 |   Service   |                     URL                  |
 |-----------  |------------------------------------------|
-| Frontend    | http://localhost:3000                    |
-| Backend API | http://localhost:8080/api                |
+| Backend API | http://localhost:5173              |
 | Swagger UI  | http://localhost:8080/swagger/index.html |
 
 ## Endpoint API (akan diupdate setelah projek selesai)
@@ -67,6 +66,7 @@ docker-compose up --build
 | GET    | /api/mahasiswa/:id | Ambil mahasiswa by ID      |
 | POST   | /api/mahasiswa | Tambah mahasiswa               |
 | PUT    | /api/mahasiswa/:id | Update mahasiswa           |
+| DELETE | /api/mahasiswa/reset | Hapus semua data mahasiswa |
 | DELETE | /api/mahasiswa/:id | Hapus mahasiswa            |
 | GET    | /api/jurusan | Ambil semua jurusan              |
 
