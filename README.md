@@ -54,7 +54,8 @@ docker-compose up --build
 ### Akses Aplikasi
 |   Service   |                     URL                  |
 |-----------  |------------------------------------------|
-| Backend API | http://localhost:5173              |
+| Frontend  | http://localhost:3000 |
+|Backend API | http://localhost:5173              |
 | Swagger UI  | http://localhost:8080/swagger/index.html |
 
 ## Endpoint API (akan diupdate setelah projek selesai)
@@ -66,8 +67,8 @@ docker-compose up --build
 | GET    | /api/mahasiswa/:id | Ambil mahasiswa by ID      |
 | POST   | /api/mahasiswa | Tambah mahasiswa               |
 | PUT    | /api/mahasiswa/:id | Update mahasiswa           |
-| DELETE | /api/mahasiswa/reset | Hapus semua data mahasiswa |
 | DELETE | /api/mahasiswa/:id | Hapus mahasiswa            |
+| DELETE | /api/mahasiswa/reset | Hapus semua data mahasiswa |
 | GET    | /api/jurusan | Ambil semua jurusan              |
 
 ## Database
@@ -96,3 +97,10 @@ CREATE TABLE mahasiswa (
 - Tidak ada query database di sisi frontend
 - Frontend hanya akses data melalui endpoint API
 - Semua service di-deploy via Docker
+
+## Fitur Tambahan 
+- Export data ke Excel, PDF, CSV, dan JSON
+- Validasi input di frontend dan backend
+- Notifikasi real-time (toast) untuk setiap aksi
+- Pencarian data secara real-time
+- Konsep MVC: Model (models/), View (frontend/), Controller (handlers/)
