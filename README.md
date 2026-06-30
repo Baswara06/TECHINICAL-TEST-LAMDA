@@ -3,6 +3,8 @@
 ## Identitas
 - **Nama**: Raihan Wendra Baswara
 - **Universitas**: Telkom Universiry
+- **Prodi**: S1 Informatika
+- **Angkatan**: 2024
 
 ## Deskripsi
 Aplikasi web CRUD mahasiswa dengan arsitektur REST API. Frontend React hanya berfungsi sebagai consumer API dan tidak ada query database di sisi frontend.
